@@ -1,4 +1,4 @@
-package com.app.voluntarios;
+package com.app.voluntariosbe;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
