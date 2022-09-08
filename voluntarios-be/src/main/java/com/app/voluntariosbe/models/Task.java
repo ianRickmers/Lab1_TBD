@@ -6,19 +6,19 @@ public class Task {
     private Integer id;
     private String nombre;
     private String descrip;
-    private Integer cant_vol_requerido;
+    private Integer cant_vol_requeridos;
     private Integer cant_vol_inscritos;
     private Integer id_emergencia;
     private Date finicio;
     private Date ffin;
     private Integer id_estado;
 
-    public Task(Integer id, String nombre, String descrip, Integer cant_vol_requerido, Integer cant_vol_inscritos,
+    public Task(Integer id, String nombre, String descrip, Integer cant_vol_requeridos, Integer cant_vol_inscritos,
                 Integer id_emergencia, Date finicio, Date ffin, Integer id_estado) {
         this.id = id;
         this.nombre = nombre;
         this.descrip = descrip;
-        this.cant_vol_requerido = cant_vol_requerido;
+        this.cant_vol_requeridos = cant_vol_requeridos;
         this.cant_vol_inscritos = cant_vol_inscritos;
         this.id_emergencia = id_emergencia;
         this.finicio = finicio;
@@ -51,11 +51,11 @@ public class Task {
     }
 
     public Integer getCant_vol_requerido() {
-        return cant_vol_requerido;
+        return cant_vol_requeridos;
     }
 
     public void setCant_vol_requerido(Integer cant_vol_requerido) {
-        this.cant_vol_requerido = cant_vol_requerido;
+        this.cant_vol_requeridos = cant_vol_requerido;
     }
 
     public Integer getCant_vol_inscritos() {

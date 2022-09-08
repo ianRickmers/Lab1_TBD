@@ -28,16 +28,22 @@ public class TaskService {
         Task result = taskRepository.createTask(task);
         return result;
     }
-    @PostMapping("/tasks/update")
-    public Task updateTask(@RequestBody Task task){return taskRepository.updateTask(task);}
 
-    @PostMapping("/tasks/delete")
-    public void deleteTaskById(@RequestBody int id){
+    @PutMapping("/tasks")
+    @ResponseBody
+    public Task updateTask(@RequestBody Task task){
+        Task result = taskRepository.updateTask(task);
+        return result;
+    }
+
+    @DeleteMapping("/tasks/{id}")
+    public void deleteTask(@PathVariable int id){
         taskRepository.deleteTaskById(id);
     }
 
     @GetMapping("/tasks/{id}")
-    public Task getTaskById(@RequestBody int id){
-        return taskRepository.getTaskById(id);}
+    public Task getTaskById(@PathVariable int id){
+        return taskRepository.getTaskById(id);
+    }
 
 }
