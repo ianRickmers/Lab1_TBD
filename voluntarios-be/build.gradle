@@ -24,8 +24,8 @@ dependencies {
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	compile group: 'org.sql2o', name: 'sql2o', version: '1.6.0'
-	compile 'org.postgresql:postgresql:42.2.5'
+	compileOnly group: 'org.sql2o', name: 'sql2o', version: '1.6.0'
+	compileOnly 'org.postgresql:postgresql:42.2.5'
 }
 
 tasks.named('test') {
