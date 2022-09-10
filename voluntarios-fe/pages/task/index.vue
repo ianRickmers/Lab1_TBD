@@ -2,14 +2,13 @@
   <v-data-table
     :headers="headers"
     :items="tareas"
-    sort-by="calories"
     class="elevation-1"
   >
     <template v-slot:top>
       <v-toolbar
         flat
       >
-        <v-toolbar-title>My CRUD</v-toolbar-title>
+        <v-toolbar-title>Tareas</v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
@@ -28,7 +27,7 @@
               v-bind="attrs"
               v-on="on"
             >
-              New Item
+              Crear tarea
             </v-btn>
           </template>
           <v-card>
@@ -45,8 +44,21 @@
                     md="4"
                   >
                     <v-text-field
-                      v-model="editedItem.name"
-                      label="Dessert name"
+                      v-model="editedItem.nombre"
+                      label="Nombre"
+                      type="text"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                  >
+
+                  <v-text-field
+                      v-model="editedItem.descrip"
+                      label="Descripción"
+                      type="text"
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -55,8 +67,9 @@
                     md="4"
                   >
                     <v-text-field
-                      v-model="editedItem.calories"
-                      label="Calories"
+                      v-model="editedItem.cant_vol_requeridos"
+                      label="Voluntarios requeridos"
+                      type="number"
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -65,8 +78,9 @@
                     md="4"
                   >
                     <v-text-field
-                      v-model="editedItem.fat"
-                      label="Fat (g)"
+                      v-model="editedItem.cant_vol_inscritos"
+                      label="Voluntarios inscritos"
+                      type="number"
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -75,8 +89,9 @@
                     md="4"
                   >
                     <v-text-field
-                      v-model="editedItem.carbs"
-                      label="Carbs (g)"
+                      v-model="editedItem.finicio"
+                      label="Fecha de inicio"
+                      type="date"
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -85,8 +100,31 @@
                     md="4"
                   >
                     <v-text-field
-                      v-model="editedItem.protein"
-                      label="Protein (g)"
+                      v-model="editedItem.ffin"
+                      label="Fecha de fin"
+                      type="date"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                  >
+                    <v-text-field
+                      v-model="editedItem.id_estado"
+                      label="Estado"
+                      type="number"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    sm="6"
+                    md="4"
+                  >
+                    <v-text-field
+                      v-model="editedItem.id_emergencia"
+                      label="Emergencia"
+                      type="number"
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -100,24 +138,24 @@
                 text
                 @click="close"
               >
-                Cancel
+                Cancelar
               </v-btn>
               <v-btn
                 color="blue darken-1"
                 text
                 @click="save"
               >
-                Save
+                Guardar
               </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
-            <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
+            <v-card-title class="text-h5">¿Está seguro que desea eliminar la tarea?</v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
+              <v-btn color="blue darken-1" text @click="closeDelete">Cancelar</v-btn>
               <v-btn color="blue darken-1" text @click="deleteItemConfirm">OK</v-btn>
               <v-spacer></v-spacer>
             </v-card-actions>
@@ -150,6 +188,7 @@
     </template>
   </v-data-table>
 </template>
+
 <script>
   import axios from 'axios'
   export default {
@@ -170,32 +209,38 @@
         { text: "Voluntarios inscritos", value: "cant_vol_inscritos" },
         { text: "Fecha de inicio", value: "finicio" },
         { text: "Fecha de fin", value: "ffin" },
-        { text: "Id estado", value: "id_estado" },
-        { text: 'Actions', value: 'actions', sortable: false },
+        { text: "Estado", value: "id_estado" },
+        { text: "Emergencia", value: "id_emergencia"},
+        { text: "Acciones", value: "actions" }
       ],
       tareas: [],
       editedIndex: -1,
       editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        id: 0,
+        nombre: '',
+        descrip: '',
+        cant_vol_requeridos: 0,
+        cant_vol_inscritos: 0,
+        finicio: '',
+        ffin: '',
+        id_estado: 0,
+        id_emergencia: 0,
       },
       defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        id: 0,
+        nombre: '',
+        descrip: '',
+        cant_vol_requeridos: 0,
+        cant_vol_inscritos: 0,
+        finicio: '',
+        ffin: '',
+        id_estado: 0,
+        id_emergencia: 0,
       },
     }),
-    mounted() {
-    this.getTask()
-    },
     computed: {
       formTitle () {
-        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+        return this.editedIndex === -1 ? 'Nueva tarea' : 'Editar tarea'
       },
     },
 
@@ -207,13 +252,16 @@
         val || this.closeDelete()
       },
     },
-
+    mounted() {
+      this.getTask()
+    },
     methods: {
-        async getTask(){
+      async getTask(){
         const url = 'http://localhost:8080/tasks'
         await axios.get(url)
         .then(response => {
           this.tareas = response.data
+
         })
         .catch(error => {
           console.log(error)
@@ -252,13 +300,37 @@
         })
       },
 
+      async createTask(et){
+        const url = 'http://localhost:8080/tasks'
+        await axios.post(url, et)
+        .then(response => {
+          console.log(response)
+        }).catch(error => {
+          console.log(error)
+        })
+      },
+
+
+      async updateTask(et){
+        const url = 'http://localhost:8080/tasks'
+        await axios.put(url, et)
+        .then( response => {
+          console.log(response)
+        })
+        .catch( error => {
+          console.log(error)
+        })
+      },
+
       save () {
         if (this.editedIndex > -1) {
-          Object.assign(this.tareas[this.editedIndex], this.editedItem)
+          this.editedItem.id = this.editedIndex
+          this.updateTask(this.editedItem)
         } else {
-          this.tareas.push(this.editedItem)
+          this.editedItem.id = this.tareas.length
+          this.createTask(this.editedItem)
         }
-        this.close()
+        //this.close()
       },
     },
   }
