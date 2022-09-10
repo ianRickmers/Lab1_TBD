@@ -50,12 +50,12 @@ public class Task {
         this.descrip = descrip;
     }
 
-    public Integer getCant_vol_requerido() {
+    public Integer getCant_vol_requeridos() {
         return cant_vol_requeridos;
     }
 
-    public void setCant_vol_requerido(Integer cant_vol_requerido) {
-        this.cant_vol_requeridos = cant_vol_requerido;
+    public void setCant_vol_requeridos(Integer cant_vol_requeridos) {
+        this.cant_vol_requeridos = cant_vol_requeridos;
     }
 
     public Integer getCant_vol_inscritos() {

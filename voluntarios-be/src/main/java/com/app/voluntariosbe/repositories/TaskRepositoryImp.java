@@ -59,8 +59,10 @@ public class TaskRepositoryImp implements TaskRepository{
 
     @Override
     public Task createTask(Task t) {
-        String sql = "INSERT INTO tarea (nombre, descrip, cant_vol_requerido, cant_vol_inscritos, id_emergencia, finicio, ffin, id_estado) " +
-                "VALUES (:nombre, :descrip, :cant_vol_requerido, :cant_vol_inscritos, :id_emergencia, :finicio, :ffin, :id_estado)";
+        String sql = "INSERT INTO tarea (id, nombre, descrip, cant_vol_requeridos, " +
+                "cant_vol_inscritos, id_emergencia, finicio, ffin, id_estado) " +
+                "VALUES (:id, :nombre, :descrip, :cant_vol_requeridos, :cant_vol_inscritos," +
+                " :id_emergencia, :finicio, :ffin, :id_estado)";
         Connection conn = sql2o.open();
         try (conn) {
             int id = (int) conn.createQuery(sql, true)
@@ -79,7 +81,10 @@ public class TaskRepositoryImp implements TaskRepository{
 
     @Override
     public Task updateTask(Task t) {
-        String sql = "UPDATE tarea SET nombre = :nombre, descrip = :descrip, cant_vol_requerido = :cant_vol_requerido, cant_vol_inscritos = :cant_vol_inscritos, id_emergencia = :id_emergencia, finicio = :finicio, ffin = :ffin, id_estado = :id_estado WHERE id = :id";
+        String sql = "UPDATE tarea SET nombre = :nombre, descrip = :descrip, " +
+        "cant_vol_requeridos = :cant_vol_requeridos, cant_vol_inscritos = :cant_vol_inscritos, " +
+                "id_emergencia = :id_emergencia, finicio = :finicio, ffin = :ffin, " +
+                "id_estado = :id_estado WHERE id = :id";
         Connection conn = sql2o.open();
         try (conn) {
             conn.createQuery(sql)
