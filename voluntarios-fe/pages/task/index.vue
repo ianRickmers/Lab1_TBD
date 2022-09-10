@@ -143,6 +143,7 @@
               <v-btn
                 color="blue darken-1"
                 text
+                href="/task"
                 @click="save"
               >
                 Guardar
@@ -163,7 +164,7 @@
         </v-dialog>
       </v-toolbar>
     </template>
-    <template v-slot:item.actions="{ item }">
+    <template v-slot:[`item.actions`]="{ item }">
       <v-icon
         small
         class="mr-2"
@@ -171,12 +172,14 @@
       >
         mdi-pencil
       </v-icon>
+      <v-btn icon href="/task">
       <v-icon
         small
-        @click="deleteItem(item)"
+        @click="deleteTask(item)" 
       >
         mdi-delete
       </v-icon>
+      </v-btn>
     </template>
     <template v-slot:no-data>
       <v-btn
@@ -273,10 +276,14 @@
         this.dialog = true
       },
 
-      deleteItem (item) {
-        this.editedIndex = this.tareas.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialogDelete = true
+      async deleteTask (et) {
+        const url = 'http://localhost:8080/tasks/'+String(et.id)
+        await axios.delete(url)
+        .then(response => {
+          console.log(response)
+        }).catch(error => {
+          console.log(error)
+        })
       },
 
       deleteItemConfirm () {

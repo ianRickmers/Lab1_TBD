@@ -65,7 +65,7 @@ public class TaskRepositoryImp implements TaskRepository{
                 " :id_emergencia, :finicio, :ffin, :id_estado)";
         Connection conn = sql2o.open();
         try (conn) {
-            int id = (int) conn.createQuery(sql, true)
+            int id = (int) conn.createQuery(sql,true)
                     .bind(t)
                     .executeUpdate()
                     .getKey();
