@@ -47,6 +47,9 @@
                       v-model="editedItem.nombre"
                       label="Nombre"
                       type="text"
+                      :rules="[rules.required, rules.counter]"
+                      counter
+                      maxlength="60"
                       required
                     ></v-text-field>
                   </v-col>
@@ -60,6 +63,9 @@
                       v-model="editedItem.descrip"
                       label="Descripción"
                       type="text"
+                      :rules="[rules.required]"
+                      counter
+                      maxlength="300"
                       required
                     ></v-text-field>
                   </v-col>
@@ -72,6 +78,8 @@
                       v-model="editedItem.cant_vol_requeridos"
                       label="Voluntarios requeridos"
                       type="number"
+                      :rules="[rules.required, rules.min]"
+                      min="0"
                       required
                     ></v-text-field>
                   </v-col>
@@ -84,6 +92,9 @@
                       v-model="editedItem.cant_vol_inscritos"
                       label="Voluntarios inscritos"
                       type="number"
+                      :rules="[rules.required, rules.min]"
+                      :max="max"
+                      min="0"
                       required
                     ></v-text-field>
                   </v-col>
@@ -96,6 +107,7 @@
                       v-model="editedItem.finicio"
                       label="Fecha de inicio"
                       type="date"
+                      :rules="[rules.required]"
                       required
                     ></v-text-field>
                   </v-col>
@@ -108,6 +120,7 @@
                       v-model="editedItem.ffin"
                       label="Fecha de fin"
                       type="date"
+                      :rules="[rules.required]"
                       required
                     ></v-text-field>
                   </v-col>
@@ -117,7 +130,8 @@
                       :items="estados"
                       item-text="descrip"
                       item-value="id"
-                      label="Estado">
+                      label="Estado"
+                      required>
                     </v-select>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
@@ -126,7 +140,8 @@
                       :items="emergencias"
                       item-text="nombre"
                       item-value="id"
-                      label="Emergencia">
+                      label="Emergencia"
+                      required>
                     </v-select>
                   </v-col>
                 </v-row>
@@ -206,6 +221,11 @@
     data: () => ({
       dialog: false,
       dialogDelete: false,
+      rules: {
+        required: value => !!value || 'Requerido.',
+        counter: value => value.length <= 60 || 'Max de 60 caracteres',
+        min: value => value > 0 || 'Solo valores positivos'
+      },
       headers:
       [
         {
@@ -227,6 +247,7 @@
       tareas: [],
       estados: [],
       emergencias: [],
+      max: 0,
       editedIndex: -1,
       editedItem: {
         id: 0,
@@ -254,6 +275,7 @@
 
     computed: {
       formTitle () {
+        this.max = this.editedItem.cant_vol_requeridos
         return this.editedIndex === -1 ? 'Nueva tarea' : 'Editar tarea'
       },
     },
@@ -378,7 +400,6 @@
       save () {
         if (this.editedIndex > -1) {
           this.editedItem.id = this.editedIndex
-          console.log(this.editedItem)
           this.updateTask(this.editedItem)
         } else {
           this.editedItem.id = this.tareas.length
