@@ -145,6 +145,7 @@
               <v-btn
                 color="blue darken-1"
                 text
+                href = "/task"
                 @click="save"
               >
                 Guardar
@@ -182,11 +183,11 @@
       </v-icon>
       </v-btn>
     </template>
-    <template v-slot:tarea.id_estado = {tarea}>
-      <div v-text="getNombre(tarea.id_estado, 0)"></div>
+    <template v-slot:item.id_estado = {item}>
+      <div v-text="getNombre(item.id_estado, 0)"></div>
     </template>
-    <template v-slot:tarea.id_emergencia = {tarea}>
-      <div v-text="getNombre(tarea.id_emergencia, 1)"></div>
+    <template v-slot:item.id_emergencia = {item}>
+      <div v-text="getNombre(item.id_emergencia, 1)"></div>
     </template>
     <template v-slot:no-data>
       <v-btn
@@ -277,7 +278,7 @@
         const url = 'http://localhost:8080/tasks'
          axios.get(url)
         .then(response => {
-          this.tareas = response.data
+          this.tareas = response.data.sort((a,b) => a.id - b.id)
         })
         .catch(error => {
           console.log(error)
@@ -288,7 +289,7 @@
         const url = 'http://localhost:8080/status_tasks'
          axios.get(url)
         .then(response => {
-          this.estados = response.data
+          this.estados = response.data.sort((a,b) => a.id - b.id)
 
         })
         .catch(error => {
@@ -300,7 +301,7 @@
         const url = 'http://localhost:8080/emergencies'
         await axios.get(url)
         .then(response => {
-          this.emergencias = response.data
+          this.emergencias = response.data.sort((a,b) => a.id - b.id)
         })
         .catch(error => {
           console.log(error)
@@ -316,7 +317,7 @@
       },
 
       editItem (item) {
-        this.editedIndex = this.tareas.indexOf(item)
+        this.editedIndex = item.id
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
