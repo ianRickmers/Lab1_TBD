@@ -11,4 +11,5 @@ public interface SkillRepository {
     public Skill createSkill(Skill s);
     public Skill updateSkill(Skill s);
     public void deleteSkillById(int id);
+    public List<Skill> getSkillByEmergency(int id);
 }

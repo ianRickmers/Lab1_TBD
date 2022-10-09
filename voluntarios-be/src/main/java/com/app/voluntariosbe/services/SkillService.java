@@ -46,4 +46,9 @@ public class SkillService {
         return skillRepository.getSkillById(id);
     }
 
+    @GetMapping("/skills/emergencies/{id}")
+    public List<Skill> getSkillByEmergency(@PathVariable int id){
+        return skillRepository.getSkillByEmergency(id);
+    }
+
 }

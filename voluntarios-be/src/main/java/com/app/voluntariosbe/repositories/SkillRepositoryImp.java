@@ -109,4 +109,18 @@ public class SkillRepositoryImp implements SkillRepository{
         }
     }
 
+    @Override
+    public List<Skill> getSkillByEmergency(int id) {
+        String sql = "SELECT * FROM habilidad WHERE id IN (SELECT id_habilidad FROM eme_habilidad WHERE id_emergencia = :id)";
+        Connection conn = sql2o.open();
+        try (conn) {
+            return conn.createQuery(sql).addParameter("id", id).executeAndFetch(Skill.class);
+        }catch(Exception e){
+            System.out.println(e);
+            return null;
+        }finally{
+            conn.close();
+        }
+    }
+
 }
