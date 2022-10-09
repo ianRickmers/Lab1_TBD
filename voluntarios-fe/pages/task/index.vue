@@ -47,6 +47,7 @@
                       v-model="editedItem.nombre"
                       label="Nombre"
                       type="text"
+                      required
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -59,6 +60,7 @@
                       v-model="editedItem.descrip"
                       label="Descripción"
                       type="text"
+                      required
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -70,6 +72,7 @@
                       v-model="editedItem.cant_vol_requeridos"
                       label="Voluntarios requeridos"
                       type="number"
+                      required
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -81,6 +84,7 @@
                       v-model="editedItem.cant_vol_inscritos"
                       label="Voluntarios inscritos"
                       type="number"
+                      required
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -92,6 +96,7 @@
                       v-model="editedItem.finicio"
                       label="Fecha de inicio"
                       type="date"
+                      required
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -103,6 +108,7 @@
                       v-model="editedItem.ffin"
                       label="Fecha de fin"
                       type="date"
+                      required
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -114,6 +120,7 @@
                       v-model="editedItem.id_estado"
                       label="Estado"
                       type="number"
+                      required
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -125,6 +132,7 @@
                       v-model="editedItem.id_emergencia"
                       label="Emergencia"
                       type="number"
+                      required
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -217,6 +225,8 @@
         { text: "Acciones", value: "actions" }
       ],
       tareas: [],
+      estados: [],
+      emergencias: [],
       editedIndex: -1,
       editedItem: {
         id: 0,
@@ -241,6 +251,7 @@
         id_emergencia: 0,
       },
     }),
+
     computed: {
       formTitle () {
         return this.editedIndex === -1 ? 'Nueva tarea' : 'Editar tarea'
@@ -255,21 +266,56 @@
         val || this.closeDelete()
       },
     },
-    mounted() {
+
+    mounted() {  
       this.getTask()
+      this.getStatusTask()
+      this.getEmergencies()
     },
+
     methods: {
-      async getTask(){
+      getTask(){
         const url = 'http://localhost:8080/tasks'
-        await axios.get(url)
+        axios.get(url)
         .then(response => {
           this.tareas = response.data
+        })
+        .catch(error => {
+          console.log(error)
+        })
+      },
+
+      getStatusTask(){
+        const url = 'http://localhost:8080/status_tasks'
+        axios.get(url)
+        .then(response => {
+          this.estados = response.data
 
         })
         .catch(error => {
           console.log(error)
         })
       },
+
+      getEmergencies(){
+        const url = 'http://localhost:8080/emergencies'
+        axios.get(url)
+        .then(response => {
+          this.emergencias = response.data
+          this.changeId()
+        })
+        .catch(error => {
+          console.log(error)
+        })
+      },
+
+      changeId(){
+        for(let i = 0; i < this.tareas.length; i++){
+          this.tareas[i].id_estado = this.estados[this.tareas[i].id_estado].descrip
+          this.tareas[i].id_emergencia = this.emergencias[this.tareas[i].id_emergencia].nombre
+        }
+      },
+
       editItem (item) {
         this.editedIndex = this.tareas.indexOf(item)
         this.editedItem = Object.assign({}, item)
