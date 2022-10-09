@@ -111,29 +111,23 @@
                       required
                     ></v-text-field>
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
+                  <v-col cols="12" sm="6" md="4">
+                    <v-select
                       v-model="editedItem.id_estado"
-                      label="Estado"
-                      type="number"
-                      required
-                    ></v-text-field>
+                      :items="estados"
+                      item-text="descrip"
+                      item-value="id"
+                      label="Estado">
+                    </v-select>
                   </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field
+                  <v-col cols="12" sm="6" md="4">
+                    <v-select
                       v-model="editedItem.id_emergencia"
-                      label="Emergencia"
-                      type="number"
-                      required
-                    ></v-text-field>
+                      :items="emergencias"
+                      item-text="nombre"
+                      item-value="id"
+                      label="Emergencia">
+                    </v-select>
                   </v-col>
                 </v-row>
               </v-container>
@@ -151,7 +145,6 @@
               <v-btn
                 color="blue darken-1"
                 text
-                href="/task"
                 @click="save"
               >
                 Guardar
@@ -188,6 +181,12 @@
         mdi-delete
       </v-icon>
       </v-btn>
+    </template>
+    <template v-slot:tarea.id_estado = {tarea}>
+      <div v-text="getNombre(tarea.id_estado, 0)"></div>
+    </template>
+    <template v-slot:tarea.id_emergencia = {tarea}>
+      <div v-text="getNombre(tarea.id_emergencia, 1)"></div>
     </template>
     <template v-slot:no-data>
       <v-btn
@@ -267,16 +266,16 @@
       },
     },
 
-    mounted() {  
-      this.getTask()
+    async mounted() { 
       this.getStatusTask()
-      this.getEmergencies()
+      await this.getEmergencies()
+      this.getTask()
     },
 
     methods: {
-      getTask(){
+       getTask(){
         const url = 'http://localhost:8080/tasks'
-        axios.get(url)
+         axios.get(url)
         .then(response => {
           this.tareas = response.data
         })
@@ -285,9 +284,9 @@
         })
       },
 
-      getStatusTask(){
+       getStatusTask(){
         const url = 'http://localhost:8080/status_tasks'
-        axios.get(url)
+         axios.get(url)
         .then(response => {
           this.estados = response.data
 
@@ -297,22 +296,22 @@
         })
       },
 
-      getEmergencies(){
+      async getEmergencies(){
         const url = 'http://localhost:8080/emergencies'
-        axios.get(url)
+        await axios.get(url)
         .then(response => {
           this.emergencias = response.data
-          this.changeId()
         })
         .catch(error => {
           console.log(error)
         })
       },
 
-      changeId(){
-        for(let i = 0; i < this.tareas.length; i++){
-          this.tareas[i].id_estado = this.estados[this.tareas[i].id_estado].descrip
-          this.tareas[i].id_emergencia = this.emergencias[this.tareas[i].id_emergencia].nombre
+      getNombre(id, n){
+        if(n==0){
+          return this.estados[id].descrip
+        }else{
+          return this.emergencias[id].nombre
         }
       },
 
@@ -378,6 +377,7 @@
       save () {
         if (this.editedIndex > -1) {
           this.editedItem.id = this.editedIndex
+          console.log(this.editedItem)
           this.updateTask(this.editedItem)
         } else {
           this.editedItem.id = this.tareas.length
