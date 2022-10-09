@@ -1,4 +1,5 @@
 <template>
+  <!--tabla con el listado -->
   <v-data-table
     :headers="headers"
     :items="tareas"
@@ -8,6 +9,7 @@
       <v-toolbar
         flat
       >
+      <!-- Título del listado y botones globales -->
         <v-toolbar-title>Tareas</v-toolbar-title>
         <v-divider
           class="mx-4"
@@ -35,6 +37,7 @@
               <span class="text-h5">{{ formTitle }}</span>
             </v-card-title>
 
+          <!--Atributos del elemento editado o creado -->
             <v-card-text>
               <v-container>
                 <v-row>
@@ -43,6 +46,7 @@
                     sm="6"
                     md="4"
                   >
+                  <!-- nombre -->
                     <v-text-field
                       v-model="editedItem.nombre"
                       label="Nombre"
@@ -58,7 +62,7 @@
                     sm="6"
                     md="4"
                   >
-
+                  <!-- descripción -->
                   <v-text-field
                       v-model="editedItem.descrip"
                       label="Descripción"
@@ -74,6 +78,7 @@
                     sm="6"
                     md="4"
                   >
+                  <!-- cantidad de voluntarios -->
                     <v-text-field
                       v-model="editedItem.cant_vol_requeridos"
                       label="Voluntarios requeridos"
@@ -88,6 +93,7 @@
                     sm="6"
                     md="4"
                   >
+                  <!-- Voluntarios inscritos -->
                     <v-text-field
                       v-model="editedItem.cant_vol_inscritos"
                       label="Voluntarios inscritos"
@@ -103,6 +109,7 @@
                     sm="6"
                     md="4"
                   >
+                  <!-- fecha de inicio -->
                     <v-text-field
                       v-model="editedItem.finicio"
                       label="Fecha de inicio"
@@ -116,6 +123,7 @@
                     sm="6"
                     md="4"
                   >
+                  <!-- fecha de fin -->
                     <v-text-field
                       v-model="editedItem.ffin"
                       label="Fecha de fin"
@@ -124,6 +132,8 @@
                       required
                     ></v-text-field>
                   </v-col>
+
+                  <!-- Nombre del id del estado, se hace mediante un select-->
                   <v-col cols="12" sm="6" md="4">
                     <v-select
                       v-model="editedItem.id_estado"
@@ -134,6 +144,8 @@
                       required>
                     </v-select>
                   </v-col>
+
+                  <!-- Nombre del id de la emergencia, se hace mediante un select -->
                   <v-col cols="12" sm="6" md="4">
                     <v-select
                       v-model="editedItem.id_emergencia"
@@ -148,6 +160,7 @@
               </v-container>
             </v-card-text>
 
+            <!-- Botones de guardar y cancelar -->
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
@@ -168,6 +181,8 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+
+        <!-- Mensaje de diálogo de eliminar -->
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
             <v-card-title class="text-h5">¿Está seguro que desea eliminar la tarea?</v-card-title>
@@ -181,6 +196,8 @@
         </v-dialog>
       </v-toolbar>
     </template>
+
+    <!-- Botón de editar y de eliminar -->
     <template v-slot:[`item.actions`]="{ item }">
       <v-icon
         small
@@ -192,31 +209,28 @@
       <v-btn icon href="/task">
       <v-icon
         small
-        @click="deleteTask(item)" 
+        @click="deleteItem(item)" 
       >
         mdi-delete
       </v-icon>
       </v-btn>
     </template>
-    <template v-slot:item.id_estado = {item}>
+
+    <!-- nombres de id_estado y id_emergencia -->
+    <template v-slot:[`item.id_estado`]="{ item }">
       <div v-text="getNombre(item.id_estado, 0)"></div>
     </template>
-    <template v-slot:item.id_emergencia = {item}>
+    <template v-slot:[`item.id_emergencia`]="{ item }">
       <div v-text="getNombre(item.id_emergencia, 1)"></div>
-    </template>
-    <template v-slot:no-data>
-      <v-btn
-        color="primary"
-        @click="initialize"
-      >
-        Reset
-      </v-btn>
     </template>
   </v-data-table>
 </template>
 
 <script>
+/* Conexión con axios */
   import axios from 'axios'
+
+  /* Data ocupada para tener el listado, el edit y también el crear */
   export default {
     data: () => ({
       dialog: false,
@@ -226,6 +240,7 @@
         counter: value => value.length <= 60 || 'Max de 60 caracteres',
         min: value => value > 0 || 'Solo valores positivos'
       },
+      /* Los header obtienen la información de los atributos y se le agrega un label */
       headers:
       [
         {
@@ -244,11 +259,13 @@
         { text: "Emergencia", value: "id_emergencia"},
         { text: "Acciones", value: "actions" }
       ],
+
+      /* Se inicializan variables a usar */
       tareas: [],
       estados: [],
       emergencias: [],
       max: 0,
-      editedIndex: -1,
+      editedIndex: -1,      
       editedItem: {
         id: 0,
         nombre: '',
@@ -273,6 +290,7 @@
       },
     }),
 
+
     computed: {
       formTitle () {
         this.max = this.editedItem.cant_vol_requeridos
@@ -280,6 +298,7 @@
       },
     },
 
+    /* Avisa si es que el mensaje debería estar en pantalla o no */
     watch: {
       dialog (val) {
         val || this.close()
@@ -289,13 +308,18 @@
       },
     },
 
+    /* Mounted ejecuta las lineas al ingresar a la página, en este caso obtiene 
+    los datos */
     async mounted() { 
       this.getStatusTask()
       await this.getEmergencies()
       this.getTask()
     },
 
+    /* Se definen los métodos */
     methods: {
+
+      /* Obtiene las tareas */
        getTask(){
         const url = 'http://localhost:8080/tasks'
          axios.get(url)
@@ -307,6 +331,7 @@
         })
       },
 
+      /* Obtiene los estados de las tareas */
        getStatusTask(){
         const url = 'http://localhost:8080/status_tasks'
          axios.get(url)
@@ -319,6 +344,7 @@
         })
       },
 
+      /* Se obtienen las emergencias */
       async getEmergencies(){
         const url = 'http://localhost:8080/emergencies'
         await axios.get(url)
@@ -330,6 +356,7 @@
         })
       },
 
+      /* Se obtiene el nombre de la emergencia o estado, muestra el nombre relacionado al id*/
       getNombre(id, n){
         if(n==0){
           return this.estados[id].descrip
@@ -338,12 +365,21 @@
         }
       },
 
+      /* Se edita la tarea */
       editItem (item) {
         this.editedIndex = item.id
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
 
+      /* Se elimina la tarea */
+       deleteItem (item) {
+        this.editedIndex = item.id
+        this.editedItem = Object.assign({}, item)
+        this.dialogDelete = true
+      },
+
+      /* Hace la conexión del delete con axios */
       async deleteTask (et) {
         const url = 'http://localhost:8080/tasks/'+String(et.id)
         await axios.delete(url)
@@ -354,11 +390,13 @@
         })
       },
 
+      /* Se confirma el delete de un item */
       deleteItemConfirm () {
         this.tareas.splice(this.editedIndex, 1)
         this.closeDelete()
       },
 
+      /* Se cierra el dialogo de editar */
       close () {
         this.dialog = false
         this.$nextTick(() => {
@@ -367,6 +405,7 @@
         })
       },
 
+      /* Se cierra el dialogo de eliminar */
       closeDelete () {
         this.dialogDelete = false
         this.$nextTick(() => {
@@ -375,6 +414,7 @@
         })
       },
 
+      /*conexión con axios para crear la tarea */
       async createTask(et){
         const url = 'http://localhost:8080/tasks'
         await axios.post(url, et)
@@ -385,7 +425,7 @@
         })
       },
 
-
+      /* conexión con axios para editar la tarea */
       async updateTask(et){
         const url = 'http://localhost:8080/tasks'
         await axios.put(url, et)
@@ -397,6 +437,7 @@
         })
       },
 
+      /* Se confirma la edición de un item */
       save () {
         if (this.editedIndex > -1) {
           this.editedItem.id = this.editedIndex
