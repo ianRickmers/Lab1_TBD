@@ -121,11 +121,11 @@
                       v-model="nuevosRequerimientos"
                       :items="requerimientos"
                       item-text="descrip"
-                      item-value="id"
                       attach
                       requerimientos
                       label="Requerimientos"
                       multiple
+                      return-object
                     ></v-select>
                   </v-col>
 
@@ -237,6 +237,11 @@ export default {
       id_estado: 0,
       id_emergencia: 0,
     },
+    task_skill: {
+      id: null,
+      id_emehab: 0,
+      id_tarea: 0,
+    },
     defaultItem: {
       id: 0,
       nombre: "",
@@ -254,7 +259,7 @@ export default {
     formTitle() {
       this.max = this.editedItem.cant_vol_requeridos;
       this.getRequirements();
-      console.log(this.nuevosRequerimientos);
+      console.log(this.nuevosRequerimientos)
       return this.editedIndex === -1 ? "Nueva tarea" : "Editar tarea";
     },
   },
@@ -279,6 +284,28 @@ export default {
 
   /* Se definen los métodos */
   methods: {
+
+    uploadRequirements(){
+      for(let i=0;i<this.nuevosRequerimientos.length;i++){
+        task_skill.id_emehab = this.nuevosRequerimientos[i]
+        task_skill.id_tarea = this.editedIndex
+        createRequirementes()
+      }
+    },
+
+    async createRequirementes(){
+      const url = "http://localhost:8080/task_skills";
+      console.log(task_skill)
+      await axios
+        .post(url,task_skill)
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
     /* Obtiene las tareas */
     getTask() {
       const url = "http://localhost:8080/tasks";
@@ -293,7 +320,7 @@ export default {
     },
 
     getRequirements() {
-      const url =
+      const url = 
         "http://localhost:8080/skills/emergencies/" +
         this.editedItem.id_emergencia;
       axios
@@ -422,9 +449,11 @@ export default {
       if (this.editedIndex > -1) {
         this.editedItem.id = this.editedIndex;
         this.updateTask(this.editedItem);
+        this.uploadRequirements()
       } else {
         this.editedItem.id = this.tareas.length;
         this.createTask(this.editedItem);
+        this.uploadRequirements()
       }
       //this.close()
     },
